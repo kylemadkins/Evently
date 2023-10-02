@@ -22,5 +22,12 @@ namespace API.Controllers
             }
             return evt;
         }
+
+        [HttpPost(Name = "CreateEvent")]
+        public async Task<IActionResult> CreateEvent(Event evt)
+        {
+            await Mediator.Send(new Create.Command { Event = evt });
+            return Ok();
+        }
     }
 }
