@@ -37,5 +37,12 @@ namespace API.Controllers
             await Mediator.Send(new Update.Command { Event = evt });
             return Ok();
         }
+
+        [HttpDelete("{id}", Name = "DeleteEvent")]
+        public async Task<IActionResult> DeleteEvent(Guid id)
+        {
+            await Mediator.Send(new Delete.Command { Id = id });
+            return Ok();
+        }
     }
 }
