@@ -5,11 +5,7 @@ export default function Navigation() {
     <Menu inverted fixed="top">
       <Container>
         <Menu.Item header>
-          <img
-            src="../../../public/logo.png"
-            alt="Evently"
-            style={{ marginRight: "1rem" }}
-          />
+          <img src="/logo.png" alt="Evently" style={{ marginRight: "1rem" }} />
           Evently
         </Menu.Item>
         <Menu.Item name="Events"></Menu.Item>
