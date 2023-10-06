@@ -7,16 +7,31 @@ import EventForm from "../form/EventForm";
 
 type Props = {
   events: IEvent[];
+  selectedEvent: IEvent | null;
+  onSelectEvent: (id: string) => void;
+  onCancelSelectEvent: () => void;
 };
 
-export default function EventDashboard({ events }: Props) {
+export default function EventDashboard({
+  events,
+  selectedEvent,
+  onSelectEvent,
+  onCancelSelectEvent,
+}: Props) {
   return (
     <Grid>
       <Grid.Column width="10">
-        <EventList events={events} />
+        <EventList events={events} onSelectEvent={onSelectEvent} />
       </Grid.Column>
       <Grid.Column width="6">
-        {events.length > 0 ? <EventDetails event={events[0]} /> : ""}
+        {selectedEvent ? (
+          <EventDetails
+            event={selectedEvent}
+            onCancelSelectEvent={onCancelSelectEvent}
+          />
+        ) : (
+          ""
+        )}
         <EventForm />
       </Grid.Column>
     </Grid>

@@ -4,9 +4,10 @@ import { Event as IEvent } from "../../../app/types/Event";
 
 type Props = {
   events: IEvent[];
+  onSelectEvent: (id: string) => void;
 };
 
-export default function EventList({ events }: Props) {
+export default function EventList({ events, onSelectEvent }: Props) {
   return (
     <Segment>
       <Item.Group divided>
@@ -23,7 +24,12 @@ export default function EventList({ events }: Props) {
               </Item.Description>
               <Item.Extra>
                 <Label basic content={event.category} />
-                <Button floated="right" content="View" color="blue" />
+                <Button
+                  floated="right"
+                  content="View"
+                  color="blue"
+                  onClick={() => onSelectEvent(event.id)}
+                />
               </Item.Extra>
             </Item.Content>
           </Item>
