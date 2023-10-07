@@ -43,6 +43,14 @@ function App() {
     setFormOpen(false);
   };
 
+  const handleSaveEvent = (event: IEvent) => {
+    event.id
+      ? setEvents([...events.filter(({ id }) => id !== event.id), event])
+      : setEvents([...events, event]);
+    setFormOpen(false);
+    setSelectedEvent(event);
+  };
+
   return (
     <>
       <Navigation onOpenForm={handleOpenForm} />
@@ -55,6 +63,7 @@ function App() {
           formOpen={formOpen}
           onOpenForm={handleOpenForm}
           onCloseForm={handleCloseForm}
+          onSaveEvent={handleSaveEvent}
         />
       </Container>
     </>

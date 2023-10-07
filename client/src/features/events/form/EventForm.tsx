@@ -6,24 +6,27 @@ import { Event as IEvent } from "../../../app/types/Event";
 type Props = {
   selectedEvent: IEvent | null;
   onCloseForm: () => void;
+  onSaveEvent: (event: IEvent) => void;
 };
 
-export default function EventForm({ selectedEvent, onCloseForm }: Props) {
-  const defaultEvent = { ...selectedEvent } ?? {
-    id: "",
-    title: "",
-    date: "",
-    description: "",
-    category: "",
-    city: "",
-    venue: "",
-  };
+export default function EventForm({
+  selectedEvent,
+  onCloseForm,
+  onSaveEvent,
+}: Props) {
+  const defaultEvent = selectedEvent
+    ? { ...selectedEvent }
+    : {
+        id: "",
+        title: "",
+        date: "",
+        description: "",
+        category: "",
+        city: "",
+        venue: "",
+      };
 
   const [event, setEvent] = useState(defaultEvent);
-
-  const handleSubmit = () => {
-    console.log(event);
-  };
 
   const handleInputChange = (
     evt: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -34,7 +37,7 @@ export default function EventForm({ selectedEvent, onCloseForm }: Props) {
 
   return (
     <Segment clearing>
-      <Form autoComplete="off" onSubmit={handleSubmit}>
+      <Form autoComplete="off" onSubmit={() => onSaveEvent(event)}>
         <Form.Input
           placeholder="Title"
           value={event.title}
@@ -77,7 +80,7 @@ export default function EventForm({ selectedEvent, onCloseForm }: Props) {
           content="Cancel"
           onClick={onCloseForm}
         />
-        <Button floated="right" positive type="submit" content="Submit" />
+        <Button floated="right" positive type="submit" content="Save" />
       </Form>
     </Segment>
   );
