@@ -57,6 +57,7 @@ export default function EventForm({
           onChange={handleInputChange}
         />
         <Form.Input
+          type="date"
           placeholder="Date"
           value={event.date}
           name="date"

@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import { Container } from "semantic-ui-react";
 import { v4 as uuid } from "uuid";
 import "semantic-ui-css/semantic.min.css";
 
+import { api } from "../api";
 import { Event as IEvent } from "../types/Event";
 import Navigation from "./Navigation";
 import EventDashboard from "../../features/events/dashboard/EventDashboard";
@@ -14,10 +14,14 @@ function App() {
   const [formOpen, setFormOpen] = useState(false);
 
   useEffect(() => {
-    axios
-      .get<IEvent[]>("http://localhost:5000/api/events")
+    api.Events.list()
       .then((res) => {
-        setEvents(res.data);
+        setEvents(
+          res.data.map((event) => ({
+            ...event,
+            date: event.date.split("T")[0],
+          })),
+        );
       })
       .catch(() => {});
   }, []);
