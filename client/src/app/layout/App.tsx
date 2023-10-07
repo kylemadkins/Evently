@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Container } from "semantic-ui-react";
+import { v4 as uuid } from "uuid";
 import "semantic-ui-css/semantic.min.css";
 
 import { Event as IEvent } from "../types/Event";
@@ -44,9 +45,12 @@ function App() {
   };
 
   const handleSaveEvent = (event: IEvent) => {
-    event.id
-      ? setEvents([...events.filter(({ id }) => id !== event.id), event])
-      : setEvents([...events, event]);
+    if (event.id) {
+      setEvents([...events.filter(({ id }) => id !== event.id), event]);
+    } else {
+      event.id = uuid();
+      setEvents([...events, event]);
+    }
     setFormOpen(false);
     setSelectedEvent(event);
   };
