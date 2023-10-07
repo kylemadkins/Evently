@@ -25,15 +25,15 @@ export default function EventDetails({
         <Button.Group widths="2">
           <Button
             basic
-            color="blue"
-            content="Edit"
-            onClick={() => onOpenForm(event.id)}
-          />
-          <Button
-            basic
             color="grey"
             content="Cancel"
             onClick={onCancelSelectEvent}
+          />
+          <Button
+            basic
+            color="blue"
+            content="Edit"
+            onClick={() => onOpenForm(event.id)}
           />
         </Button.Group>
       </Card.Content>

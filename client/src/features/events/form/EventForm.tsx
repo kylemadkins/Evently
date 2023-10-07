@@ -7,12 +7,14 @@ type Props = {
   selectedEvent: IEvent | null;
   onCloseForm: () => void;
   onSaveEvent: (event: IEvent) => void;
+  saving: boolean;
 };
 
 export default function EventForm({
   selectedEvent,
   onCloseForm,
   onSaveEvent,
+  saving,
 }: Props) {
   const defaultEvent = selectedEvent
     ? { ...selectedEvent }
@@ -76,12 +78,18 @@ export default function EventForm({
           onChange={handleInputChange}
         />
         <Button
+          loading={saving}
+          floated="right"
+          positive
+          type="submit"
+          content="Save"
+        />
+        <Button
           floated="right"
           type="button"
           content="Cancel"
           onClick={onCloseForm}
         />
-        <Button floated="right" positive type="submit" content="Save" />
       </Form>
     </Segment>
   );

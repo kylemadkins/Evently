@@ -14,6 +14,7 @@ function App() {
   const [selectedEvent, setSelectedEvent] = useState<IEvent | null>(null);
   const [formOpen, setFormOpen] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     api.Events.list()
@@ -26,14 +27,12 @@ function App() {
         );
       })
       .catch(() => {})
-      .finally(() => {
-        setLoading(false);
-      });
+      .finally(() => setLoading(false));
   }, []);
 
   const handleSelectEvent = (id: string) => {
     setSelectedEvent(events.find((event) => event.id === id) || null);
-    handleCloseForm();
+    setFormOpen(false);
   };
 
   const handleCancelSelectEvent = () => {
@@ -54,21 +53,43 @@ function App() {
   };
 
   const handleSaveEvent = (event: IEvent) => {
+    const resetEventForm = () => {
+      setFormOpen(false);
+      setSelectedEvent(event);
+    };
+
+    setSaving(true);
     if (event.id) {
-      setEvents([...events.filter(({ id }) => id !== event.id), event]);
+      api.Events.update(event)
+        .then(() => {
+          setEvents([...events.filter(({ id }) => id !== event.id), event]);
+          resetEventForm();
+        })
+        .catch(() => {})
+        .finally(() => setSaving(false));
     } else {
       event.id = uuid();
-      setEvents([...events, event]);
+      api.Events.create(event)
+        .then(() => {
+          setEvents([...events, event]);
+          resetEventForm();
+        })
+        .catch(() => {})
+        .finally(() => setSaving(false));
     }
-    setFormOpen(false);
-    setSelectedEvent(event);
   };
 
   const handleDeleteEvent = (id: string) => {
-    setEvents([...events.filter((event) => event.id !== id)]);
-    if (selectedEvent && selectedEvent.id === id) {
-      setSelectedEvent(null);
-    }
+    setSaving(true);
+    api.Events.delete(id)
+      .then(() => {
+        setEvents([...events.filter((event) => event.id !== id)]);
+        if (selectedEvent && selectedEvent.id === id) {
+          setSelectedEvent(null);
+        }
+      })
+      .catch(() => {})
+      .finally(() => setSaving(false));
   };
 
   if (loading) return <Loading />;
@@ -87,6 +108,7 @@ function App() {
           onCloseForm={handleCloseForm}
           onSaveEvent={handleSaveEvent}
           onDeleteEvent={handleDeleteEvent}
+          saving={saving}
         />
       </Container>
     </>

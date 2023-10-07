@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Segment, Item, Label, Button } from "semantic-ui-react";
 
 import { Event as IEvent } from "../../../app/types/Event";
@@ -6,13 +7,22 @@ type Props = {
   events: IEvent[];
   onSelectEvent: (id: string) => void;
   onDeleteEvent: (id: string) => void;
+  saving: boolean;
 };
 
 export default function EventList({
   events,
   onSelectEvent,
   onDeleteEvent,
+  saving,
 }: Props) {
+  const [targetId, setTargetId] = useState("");
+
+  const handleDelete = (id: string) => {
+    onDeleteEvent(id);
+    setTargetId(id);
+  };
+
   return (
     <Segment>
       <Item.Group divided>
@@ -36,10 +46,11 @@ export default function EventList({
                   onClick={() => onSelectEvent(event.id)}
                 />
                 <Button
+                  loading={saving && event.id === targetId}
                   floated="right"
                   content="Delete"
                   color="red"
-                  onClick={() => onDeleteEvent(event.id)}
+                  onClick={() => handleDelete(event.id)}
                 />
               </Item.Extra>
             </Item.Content>

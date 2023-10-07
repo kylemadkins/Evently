@@ -15,6 +15,7 @@ type Props = {
   onCloseForm: () => void;
   onSaveEvent: (event: IEvent) => void;
   onDeleteEvent: (id: string) => void;
+  saving: boolean;
 };
 
 export default function EventDashboard({
@@ -27,6 +28,7 @@ export default function EventDashboard({
   onCloseForm,
   onSaveEvent,
   onDeleteEvent,
+  saving,
 }: Props) {
   return (
     <Grid>
@@ -35,6 +37,7 @@ export default function EventDashboard({
           events={events}
           onSelectEvent={onSelectEvent}
           onDeleteEvent={onDeleteEvent}
+          saving={saving}
         />
       </Grid.Column>
       <Grid.Column width="6">
@@ -52,6 +55,7 @@ export default function EventDashboard({
             selectedEvent={selectedEvent}
             onCloseForm={onCloseForm}
             onSaveEvent={onSaveEvent}
+            saving={saving}
           />
         ) : (
           ""
