@@ -7,11 +7,13 @@ import { api } from "../api";
 import { Event as IEvent } from "../types/Event";
 import Navigation from "./Navigation";
 import EventDashboard from "../../features/events/dashboard/EventDashboard";
+import Loading from "./Loading";
 
 function App() {
   const [events, setEvents] = useState<IEvent[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<IEvent | null>(null);
   const [formOpen, setFormOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     api.Events.list()
@@ -23,7 +25,10 @@ function App() {
           })),
         );
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => {
+        setLoading(false);
+      });
   }, []);
 
   const handleSelectEvent = (id: string) => {
@@ -65,6 +70,8 @@ function App() {
       setSelectedEvent(null);
     }
   };
+
+  if (loading) return <Loading />;
 
   return (
     <>
