@@ -55,6 +55,13 @@ function App() {
     setSelectedEvent(event);
   };
 
+  const handleDeleteEvent = (id: string) => {
+    setEvents([...events.filter((event) => event.id !== id)]);
+    if (selectedEvent && selectedEvent.id === id) {
+      setSelectedEvent(null);
+    }
+  };
+
   return (
     <>
       <Navigation onOpenForm={handleOpenForm} />
@@ -68,6 +75,7 @@ function App() {
           onOpenForm={handleOpenForm}
           onCloseForm={handleCloseForm}
           onSaveEvent={handleSaveEvent}
+          onDeleteEvent={handleDeleteEvent}
         />
       </Container>
     </>

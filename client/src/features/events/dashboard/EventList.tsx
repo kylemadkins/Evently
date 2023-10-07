@@ -5,9 +5,14 @@ import { Event as IEvent } from "../../../app/types/Event";
 type Props = {
   events: IEvent[];
   onSelectEvent: (id: string) => void;
+  onDeleteEvent: (id: string) => void;
 };
 
-export default function EventList({ events, onSelectEvent }: Props) {
+export default function EventList({
+  events,
+  onSelectEvent,
+  onDeleteEvent,
+}: Props) {
   return (
     <Segment>
       <Item.Group divided>
@@ -29,6 +34,12 @@ export default function EventList({ events, onSelectEvent }: Props) {
                   content="View"
                   color="blue"
                   onClick={() => onSelectEvent(event.id)}
+                />
+                <Button
+                  floated="right"
+                  content="Delete"
+                  color="red"
+                  onClick={() => onDeleteEvent(event.id)}
                 />
               </Item.Extra>
             </Item.Content>
