@@ -1,6 +1,10 @@
 import { Menu, Container, Button } from "semantic-ui-react";
 
-export default function Navigation() {
+type Props = {
+  onOpenForm: (id?: string) => void;
+};
+
+export default function Navigation({ onOpenForm }: Props) {
   return (
     <Menu inverted fixed="top">
       <Container>
@@ -10,7 +14,11 @@ export default function Navigation() {
         </Menu.Item>
         <Menu.Item name="Events"></Menu.Item>
         <Menu.Item>
-          <Button positive content="Create Event" />
+          <Button
+            positive
+            content="Create Event"
+            onClick={() => onOpenForm()}
+          />
         </Menu.Item>
       </Container>
     </Menu>

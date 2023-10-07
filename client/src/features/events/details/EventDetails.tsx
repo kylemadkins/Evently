@@ -5,9 +5,14 @@ import { Event as IEvent } from "../../../app/types/Event";
 type Props = {
   event: IEvent;
   onCancelSelectEvent: () => void;
+  onOpenForm: (id?: string) => void;
 };
 
-export default function EventDetails({ event, onCancelSelectEvent }: Props) {
+export default function EventDetails({
+  event,
+  onCancelSelectEvent,
+  onOpenForm,
+}: Props) {
   return (
     <Card>
       <Image src={`/categories/${event.category}.jpg`} wrapped ui={false} />
@@ -18,7 +23,12 @@ export default function EventDetails({ event, onCancelSelectEvent }: Props) {
       </Card.Content>
       <Card.Content extra>
         <Button.Group widths="2">
-          <Button basic color="blue" content="Edit" />
+          <Button
+            basic
+            color="blue"
+            content="Edit"
+            onClick={() => onOpenForm(event.id)}
+          />
           <Button
             basic
             color="grey"

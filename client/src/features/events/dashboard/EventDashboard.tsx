@@ -10,6 +10,9 @@ type Props = {
   selectedEvent: IEvent | null;
   onSelectEvent: (id: string) => void;
   onCancelSelectEvent: () => void;
+  formOpen: boolean;
+  onOpenForm: (id?: string) => void;
+  onCloseForm: () => void;
 };
 
 export default function EventDashboard({
@@ -17,6 +20,9 @@ export default function EventDashboard({
   selectedEvent,
   onSelectEvent,
   onCancelSelectEvent,
+  formOpen,
+  onOpenForm,
+  onCloseForm,
 }: Props) {
   return (
     <Grid>
@@ -24,15 +30,20 @@ export default function EventDashboard({
         <EventList events={events} onSelectEvent={onSelectEvent} />
       </Grid.Column>
       <Grid.Column width="6">
-        {selectedEvent ? (
+        {selectedEvent && !formOpen ? (
           <EventDetails
             event={selectedEvent}
             onCancelSelectEvent={onCancelSelectEvent}
+            onOpenForm={onOpenForm}
           />
         ) : (
           ""
         )}
-        <EventForm />
+        {formOpen ? (
+          <EventForm selectedEvent={selectedEvent} onCloseForm={onCloseForm} />
+        ) : (
+          ""
+        )}
       </Grid.Column>
     </Grid>
   );

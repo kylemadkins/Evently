@@ -10,6 +10,7 @@ import EventDashboard from "../../features/events/dashboard/EventDashboard";
 function App() {
   const [events, setEvents] = useState<IEvent[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<IEvent | null>(null);
+  const [formOpen, setFormOpen] = useState(false);
 
   useEffect(() => {
     axios
@@ -22,21 +23,38 @@ function App() {
 
   const handleSelectEvent = (id: string) => {
     setSelectedEvent(events.find((event) => event.id === id) || null);
+    handleCloseForm();
   };
 
   const handleCancelSelectEvent = () => {
     setSelectedEvent(null);
   };
 
+  const handleOpenForm = (id?: string) => {
+    if (id) {
+      handleSelectEvent(id);
+    } else {
+      handleCancelSelectEvent();
+    }
+    setFormOpen(true);
+  };
+
+  const handleCloseForm = () => {
+    setFormOpen(false);
+  };
+
   return (
     <>
-      <Navigation />
+      <Navigation onOpenForm={handleOpenForm} />
       <Container style={{ marginTop: "7rem" }}>
         <EventDashboard
           events={events}
           selectedEvent={selectedEvent}
           onSelectEvent={handleSelectEvent}
           onCancelSelectEvent={handleCancelSelectEvent}
+          formOpen={formOpen}
+          onOpenForm={handleOpenForm}
+          onCloseForm={handleCloseForm}
         />
       </Container>
     </>
