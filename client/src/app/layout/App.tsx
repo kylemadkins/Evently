@@ -97,7 +97,7 @@ function App() {
   return (
     <>
       <Navigation onOpenForm={handleOpenForm} />
-      <Container style={{ marginTop: "7rem" }}>
+      <Container style={{ paddingTop: "7rem", paddingBottom: "7rem" }}>
         <EventDashboard
           events={events}
           selectedEvent={selectedEvent}
