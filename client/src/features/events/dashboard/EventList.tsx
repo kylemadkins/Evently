@@ -1,32 +1,21 @@
 import { useState } from "react";
 import { Segment, Item, Label, Button } from "semantic-ui-react";
 
-import { Event as IEvent } from "../../../app/types/Event";
+import { useStore } from "../../../app/stores";
 
-type Props = {
-  events: IEvent[];
-  onSelectEvent: (id: string) => void;
-  onDeleteEvent: (id: string) => void;
-  saving: boolean;
-};
-
-export default function EventList({
-  events,
-  onSelectEvent,
-  onDeleteEvent,
-  saving,
-}: Props) {
+export default function EventList() {
+  const { eventStore } = useStore();
   const [targetId, setTargetId] = useState("");
 
   const handleDelete = (id: string) => {
-    onDeleteEvent(id);
+    eventStore.deleteEvent(id);
     setTargetId(id);
   };
 
   return (
     <Segment>
       <Item.Group divided>
-        {events.map((event) => (
+        {eventStore.events.map((event) => (
           <Item key={event.id}>
             <Item.Content>
               <Item.Header as="a">{event.title}</Item.Header>
@@ -43,10 +32,10 @@ export default function EventList({
                   floated="right"
                   content="View"
                   color="blue"
-                  onClick={() => onSelectEvent(event.id)}
+                  onClick={() => eventStore.selectEvent(event.id)}
                 />
                 <Button
-                  loading={saving && event.id === targetId}
+                  loading={eventStore.saving && event.id === targetId}
                   floated="right"
                   content="Delete"
                   color="red"

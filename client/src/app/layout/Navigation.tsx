@@ -1,10 +1,9 @@
 import { Menu, Container, Button } from "semantic-ui-react";
+import { useStore } from "../stores";
 
-type Props = {
-  onOpenForm: (id?: string) => void;
-};
+export default function Navigation() {
+  const { eventStore } = useStore();
 
-export default function Navigation({ onOpenForm }: Props) {
   return (
     <Menu inverted fixed="top">
       <Container>
@@ -17,7 +16,7 @@ export default function Navigation({ onOpenForm }: Props) {
           <Button
             positive
             content="Create Event"
-            onClick={() => onOpenForm()}
+            onClick={() => eventStore.openForm()}
           />
         </Menu.Item>
       </Container>

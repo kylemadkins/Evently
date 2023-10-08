@@ -1,23 +1,14 @@
 import { useState, ChangeEvent } from "react";
 import { Button, Form, Segment } from "semantic-ui-react";
+import { observer } from "mobx-react-lite";
 
-import { Event as IEvent } from "../../../app/types/Event";
+import { useStore } from "../../../app/stores";
 
-type Props = {
-  selectedEvent: IEvent | null;
-  onCloseForm: () => void;
-  onSaveEvent: (event: IEvent) => void;
-  saving: boolean;
-};
+export default observer(function EventForm() {
+  const { eventStore } = useStore();
 
-export default function EventForm({
-  selectedEvent,
-  onCloseForm,
-  onSaveEvent,
-  saving,
-}: Props) {
-  const defaultEvent = selectedEvent
-    ? { ...selectedEvent }
+  const defaultEvent = eventStore.selectedEvent
+    ? { ...eventStore.selectedEvent }
     : {
         id: "",
         title: "",
@@ -37,9 +28,13 @@ export default function EventForm({
     setEvent({ ...event, [name]: value });
   };
 
+  const handleSubmit = () => {
+    event.id ? eventStore.updateEvent(event) : eventStore.createEvent(event);
+  };
+
   return (
     <Segment clearing>
-      <Form autoComplete="off" onSubmit={() => onSaveEvent(event)}>
+      <Form autoComplete="off" onSubmit={handleSubmit}>
         <Form.Input
           placeholder="Title"
           value={event.title}
@@ -78,7 +73,7 @@ export default function EventForm({
           onChange={handleInputChange}
         />
         <Button
-          loading={saving}
+          loading={eventStore.saving}
           floated="right"
           positive
           type="submit"
@@ -88,9 +83,9 @@ export default function EventForm({
           floated="right"
           type="button"
           content="Cancel"
-          onClick={onCloseForm}
+          onClick={eventStore.closeForm}
         />
       </Form>
     </Segment>
   );
-}
+});

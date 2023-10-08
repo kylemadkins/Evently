@@ -1,18 +1,13 @@
 import { Card, Image, Button } from "semantic-ui-react";
 
-import { Event as IEvent } from "../../../app/types/Event";
+import { useStore } from "../../../app/stores";
 
-type Props = {
-  event: IEvent;
-  onCancelSelectEvent: () => void;
-  onOpenForm: (id?: string) => void;
-};
+export default function EventDetails() {
+  const { eventStore } = useStore();
+  const { selectedEvent: event } = eventStore;
 
-export default function EventDetails({
-  event,
-  onCancelSelectEvent,
-  onOpenForm,
-}: Props) {
+  if (!event) return;
+
   return (
     <Card>
       <Image src={`/categories/${event.category}.jpg`} wrapped ui={false} />
@@ -27,13 +22,13 @@ export default function EventDetails({
             basic
             color="grey"
             content="Cancel"
-            onClick={onCancelSelectEvent}
+            onClick={eventStore.deselectEvent}
           />
           <Button
             basic
             color="blue"
             content="Edit"
-            onClick={() => onOpenForm(event.id)}
+            onClick={() => eventStore.openForm(event.id)}
           />
         </Button.Group>
       </Card.Content>

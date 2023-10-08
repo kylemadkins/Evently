@@ -1,66 +1,27 @@
 import { Grid } from "semantic-ui-react";
+import { observer } from "mobx-react-lite";
 
-import { Event as IEvent } from "../../../app/types/Event";
 import EventList from "./EventList";
 import EventDetails from "../details/EventDetails";
 import EventForm from "../form/EventForm";
+import { useStore } from "../../../app/stores";
 
-type Props = {
-  events: IEvent[];
-  selectedEvent: IEvent | null;
-  onSelectEvent: (id: string) => void;
-  onCancelSelectEvent: () => void;
-  formOpen: boolean;
-  onOpenForm: (id?: string) => void;
-  onCloseForm: () => void;
-  onSaveEvent: (event: IEvent) => void;
-  onDeleteEvent: (id: string) => void;
-  saving: boolean;
-};
+export default observer(function EventDashboard() {
+  const { eventStore } = useStore();
 
-export default function EventDashboard({
-  events,
-  selectedEvent,
-  onSelectEvent,
-  onCancelSelectEvent,
-  formOpen,
-  onOpenForm,
-  onCloseForm,
-  onSaveEvent,
-  onDeleteEvent,
-  saving,
-}: Props) {
   return (
     <Grid>
       <Grid.Column width="10">
-        <EventList
-          events={events}
-          onSelectEvent={onSelectEvent}
-          onDeleteEvent={onDeleteEvent}
-          saving={saving}
-        />
+        <EventList />
       </Grid.Column>
       <Grid.Column width="6">
-        {selectedEvent && !formOpen ? (
-          <EventDetails
-            event={selectedEvent}
-            onCancelSelectEvent={onCancelSelectEvent}
-            onOpenForm={onOpenForm}
-          />
+        {eventStore.selectedEvent && !eventStore.formOpen ? (
+          <EventDetails />
         ) : (
           ""
         )}
-        {formOpen ? (
-          <EventForm
-            selectedEvent={selectedEvent}
-            onCloseForm={onCloseForm}
-            onSaveEvent={onSaveEvent}
-            saving={saving}
-          />
-        ) : (
-          ""
-        )}
+        {eventStore.formOpen ? <EventForm /> : ""}
       </Grid.Column>
     </Grid>
   );
-}
+});
