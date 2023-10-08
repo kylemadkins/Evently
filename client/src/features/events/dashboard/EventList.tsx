@@ -15,7 +15,7 @@ export default function EventList() {
   return (
     <Segment>
       <Item.Group divided>
-        {eventStore.events.map((event) => (
+        {eventStore.eventsByDate.map((event) => (
           <Item key={event.id}>
             <Item.Content>
               <Item.Header as="a">{event.title}</Item.Header>

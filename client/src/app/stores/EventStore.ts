@@ -5,7 +5,7 @@ import { Event as IEvent } from "../types/Event";
 import { api } from "../api";
 
 export default class EventStore {
-  events: IEvent[] = [];
+  events = new Map<string, IEvent>();
   selectedEvent: IEvent | null = null;
   formOpen = false;
   loading = true;
@@ -19,10 +19,10 @@ export default class EventStore {
     try {
       const res = await api.Events.list();
       runInAction(() => {
-        this.events = res.data.map((event) => ({
-          ...event,
-          date: event.date.split("T")[0],
-        }));
+        res.data.forEach((event) => {
+          event.date = event.date.split("T")[0];
+          this.events.set(event.id, event);
+        });
       });
     } catch (err) {
       console.log(err);
@@ -30,8 +30,14 @@ export default class EventStore {
     runInAction(() => (this.loading = false));
   };
 
+  get eventsByDate() {
+    return [...this.events.values()].sort(
+      (a, b) => Date.parse(b.date) - Date.parse(a.date),
+    );
+  }
+
   selectEvent = (id: string) => {
-    this.selectedEvent = this.events.find((event) => event.id === id) || null;
+    this.selectedEvent = this.events.get(id) || null;
     this.formOpen = false;
   };
 
@@ -58,7 +64,7 @@ export default class EventStore {
     try {
       await api.Events.create(event);
       runInAction(() => {
-        this.events = [...this.events, event];
+        this.events.set(event.id, event);
         this.formOpen = false;
         this.selectedEvent = event;
       });
@@ -73,10 +79,7 @@ export default class EventStore {
     try {
       await api.Events.update(event);
       runInAction(() => {
-        this.events = [
-          ...this.events.filter(({ id }) => id !== event.id),
-          event,
-        ];
+        this.events.set(event.id, event);
         this.formOpen = false;
         this.selectedEvent = event;
       });
@@ -91,7 +94,7 @@ export default class EventStore {
     try {
       await api.Events.delete(id);
       runInAction(() => {
-        this.events = [...this.events.filter((event) => event.id !== id)];
+        this.events.delete(id);
         if (this.selectedEvent && this.selectedEvent.id === id) {
           this.selectedEvent = null;
         }
