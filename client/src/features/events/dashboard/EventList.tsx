@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { observer } from "mobx-react-lite";
 import { Segment, Item, Label, Button } from "semantic-ui-react";
+import { Link } from "react-router-dom";
 
 import { useStore } from "../../../app/stores";
 
-export default function EventList() {
+export default observer(function EventList() {
   const { eventStore } = useStore();
   const [targetId, setTargetId] = useState("");
 
@@ -18,7 +20,9 @@ export default function EventList() {
         {eventStore.eventsByDate.map((event) => (
           <Item key={event.id}>
             <Item.Content>
-              <Item.Header as="a">{event.title}</Item.Header>
+              <Item.Header as={Link} to={`/events/${event.id}`}>
+                {event.title}
+              </Item.Header>
               <Item.Meta>{event.date}</Item.Meta>
               <Item.Description>
                 <div>{event.description}</div>
@@ -29,10 +33,11 @@ export default function EventList() {
               <Item.Extra>
                 <Label basic content={event.category} />
                 <Button
+                  as={Link}
+                  to={`/events/${event.id}`}
                   floated="right"
                   content="View"
                   color="blue"
-                  onClick={() => eventStore.selectEvent(event.id)}
                 />
                 <Button
                   loading={eventStore.saving && event.id === targetId}
@@ -48,4 +53,4 @@ export default function EventList() {
       </Item.Group>
     </Segment>
   );
-}
+});

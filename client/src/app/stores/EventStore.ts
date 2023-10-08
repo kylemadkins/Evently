@@ -1,14 +1,11 @@
 import { makeAutoObservable, runInAction } from "mobx";
-import { v4 as uuid } from "uuid";
 
 import { Event as IEvent } from "../types/Event";
 import { api } from "../api";
 
 export default class EventStore {
   events = new Map<string, IEvent>();
-  selectedEvent: IEvent | null = null;
-  formOpen = false;
-  loading = true;
+  loading = false;
   saving = false;
 
   constructor() {
@@ -16,18 +13,32 @@ export default class EventStore {
   }
 
   loadEvents = async () => {
+    this.setLoading(true);
     try {
       const res = await api.Events.list();
-      runInAction(() => {
-        res.data.forEach((event) => {
-          event.date = event.date.split("T")[0];
-          this.events.set(event.id, event);
-        });
+      res.data.forEach((event) => {
+        this.setEvent(event);
       });
     } catch (err) {
       console.log(err);
     }
-    runInAction(() => (this.loading = false));
+    this.setLoading(false);
+  };
+
+  loadEvent = async (id: string) => {
+    let event = this.events.get(id);
+    if (!event) {
+      this.setLoading(true);
+      try {
+        const res = await api.Events.details(id);
+        this.setEvent(res.data);
+        event = res.data;
+      } catch (err) {
+        console.log(err);
+      }
+      this.setLoading(false);
+    }
+    return event;
   };
 
   get eventsByDate() {
@@ -36,38 +47,20 @@ export default class EventStore {
     );
   }
 
-  selectEvent = (id: string) => {
-    this.selectedEvent = this.events.get(id) || null;
-    this.formOpen = false;
+  setEvent = (event: IEvent) => {
+    event.date = event.date.split("T")[0];
+    this.events.set(event.id, event);
   };
 
-  deselectEvent = () => {
-    this.selectedEvent = null;
-  };
-
-  openForm = (id?: string) => {
-    if (id) {
-      this.selectEvent(id);
-    } else {
-      this.deselectEvent();
-    }
-    this.formOpen = true;
-  };
-
-  closeForm = () => {
-    this.formOpen = false;
+  setLoading = (loading: boolean) => {
+    this.loading = loading;
   };
 
   createEvent = async (event: IEvent) => {
     this.saving = true;
-    event.id = uuid();
     try {
       await api.Events.create(event);
-      runInAction(() => {
-        this.events.set(event.id, event);
-        this.formOpen = false;
-        this.selectedEvent = event;
-      });
+      this.events.set(event.id, event);
     } catch (err) {
       console.log(err);
     }
@@ -78,11 +71,7 @@ export default class EventStore {
     this.saving = true;
     try {
       await api.Events.update(event);
-      runInAction(() => {
-        this.events.set(event.id, event);
-        this.formOpen = false;
-        this.selectedEvent = event;
-      });
+      this.events.set(event.id, event);
     } catch (err) {
       console.log(err);
     }
@@ -93,12 +82,7 @@ export default class EventStore {
     this.saving = true;
     try {
       await api.Events.delete(id);
-      runInAction(() => {
-        this.events.delete(id);
-        if (this.selectedEvent && this.selectedEvent.id === id) {
-          this.selectedEvent = null;
-        }
-      });
+      this.events.delete(id);
     } catch (err) {
       console.log(err);
     }

@@ -1,25 +1,35 @@
-import { useState, ChangeEvent } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import { v4 as uuid } from "uuid";
 import { Button, Form, Segment } from "semantic-ui-react";
 import { observer } from "mobx-react-lite";
 
 import { useStore } from "../../../app/stores";
+import { Event as IEvent } from "../../../app/types/Event";
+import Loading from "../../../app/layout/Loading";
 
 export default observer(function EventForm() {
+  const { id } = useParams();
+  const navigate = useNavigate();
+
   const { eventStore } = useStore();
+  const [event, setEvent] = useState<IEvent>({
+    id: "",
+    title: "",
+    date: "",
+    description: "",
+    category: "",
+    city: "",
+    venue: "",
+  });
 
-  const defaultEvent = eventStore.selectedEvent
-    ? { ...eventStore.selectedEvent }
-    : {
-        id: "",
-        title: "",
-        date: "",
-        description: "",
-        category: "",
-        city: "",
-        venue: "",
-      };
-
-  const [event, setEvent] = useState(defaultEvent);
+  useEffect(() => {
+    if (id) {
+      eventStore.loadEvent(id).then((event) => {
+        if (event) setEvent(event);
+      });
+    }
+  }, [eventStore, id]);
 
   const handleInputChange = (
     evt: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
@@ -29,8 +39,15 @@ export default observer(function EventForm() {
   };
 
   const handleSubmit = () => {
-    event.id ? eventStore.updateEvent(event) : eventStore.createEvent(event);
+    if (!event.id) {
+      event.id = uuid();
+      eventStore.createEvent(event).then(() => navigate(`/events/${event.id}`));
+    } else {
+      eventStore.updateEvent(event).then(() => navigate(`/events/${event.id}`));
+    }
   };
+
+  if (eventStore.loading) return <Loading />;
 
   return (
     <Segment clearing>
@@ -79,12 +96,7 @@ export default observer(function EventForm() {
           type="submit"
           content="Save"
         />
-        <Button
-          floated="right"
-          type="button"
-          content="Cancel"
-          onClick={eventStore.closeForm}
-        />
+        <Button floated="right" type="button" content="Cancel" />
       </Form>
     </Segment>
   );
