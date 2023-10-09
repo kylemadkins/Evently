@@ -5,6 +5,7 @@ import { observer } from "mobx-react-lite";
 import { useStore } from "../../../app/stores";
 import EventList from "./EventList";
 import Loading from "../../../app/layout/Loading";
+import EventFilters from "./EventFilters";
 
 export default observer(function EventDashboard() {
   const { eventStore } = useStore();
@@ -21,7 +22,7 @@ export default observer(function EventDashboard() {
         <EventList />
       </Grid.Column>
       <Grid.Column width="6">
-        <h2>Event Filters</h2>
+        <EventFilters />
       </Grid.Column>
     </Grid>
   );
