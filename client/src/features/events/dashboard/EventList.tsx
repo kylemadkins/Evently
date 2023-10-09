@@ -1,6 +1,6 @@
 import { Fragment } from "react";
 import { observer } from "mobx-react-lite";
-import { Segment, Item, Header } from "semantic-ui-react";
+import { Header } from "semantic-ui-react";
 
 import { useStore } from "../../../app/stores";
 import EventListItem from "./EventListItem";

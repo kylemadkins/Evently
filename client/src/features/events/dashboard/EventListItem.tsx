@@ -1,7 +1,4 @@
-import { useState } from "react";
-
 import { Event as IEvent } from "../../../app/types/Event";
-import { useStore } from "../../../app/stores";
 import { Button, Icon, Item, Segment } from "semantic-ui-react";
 import { Link } from "react-router-dom";
 
@@ -10,15 +7,6 @@ type Props = {
 };
 
 export default function EventListItem({ event }: Props) {
-  const { eventStore } = useStore();
-
-  const [targetId, setTargetId] = useState("");
-
-  const handleDelete = (id: string) => {
-    eventStore.deleteEvent(id);
-    setTargetId(id);
-  };
-
   return (
     <Segment.Group>
       <Segment>
