@@ -33,8 +33,8 @@ const routes: RouteObject[] = [
             element: <EventForm key="create" />,
           },
           {
-            path: ":id/edit",
-            element: <EventForm key="edit" />,
+            path: ":id/manage",
+            element: <EventForm key="manage" />,
           },
         ],
       },

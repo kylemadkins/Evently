@@ -1,11 +1,15 @@
 import { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { observer } from "mobx-react-lite";
-import { Card, Image, Button } from "semantic-ui-react";
+import { Grid } from "semantic-ui-react";
 
 import { useStore } from "../../../app/stores";
 import { Event as IEvent } from "../../../app/types/Event";
 import Loading from "../../../app/layout/Loading";
+import EventDetailsHeader from "./EventDetailsHeader";
+import EventDetailsInfo from "./EventDetailsInfo";
+import EventDetailsChat from "./EventDetailsChat";
+import EventDetailsSidebar from "./EventDetailsSidebar";
 
 export default observer(function EventDetails() {
   const { id } = useParams();
@@ -26,25 +30,15 @@ export default observer(function EventDetails() {
   if (!event) return;
 
   return (
-    <Card fluid>
-      <Image src={`/categories/${event.category}.jpg`} wrapped ui={false} />
-      <Card.Content>
-        <Card.Header>{event.title}</Card.Header>
-        <Card.Meta>{event.date}</Card.Meta>
-        <Card.Description>{event.description}</Card.Description>
-      </Card.Content>
-      <Card.Content extra>
-        <Button.Group widths="2">
-          <Button as={Link} to="/events" basic color="grey" content="Cancel" />
-          <Button
-            as={Link}
-            to={`/events/${event.id}/edit`}
-            basic
-            color="blue"
-            content="Edit"
-          />
-        </Button.Group>
-      </Card.Content>
-    </Card>
+    <Grid>
+      <Grid.Column width="10">
+        <EventDetailsHeader event={event} />
+        <EventDetailsInfo event={event} />
+        <EventDetailsChat />
+      </Grid.Column>
+      <Grid.Column width="6">
+        <EventDetailsSidebar />
+      </Grid.Column>
+    </Grid>
   );
 });
