@@ -47,6 +47,19 @@ export default class EventStore {
     );
   }
 
+  get groupedEvents() {
+    return Object.entries(
+      this.eventsByDate.reduce(
+        (events, event) => {
+          const date = event.date;
+          events[date] = events[date] ? [...events[date], event] : [event];
+          return events;
+        },
+        {} as { [date: string]: IEvent[] },
+      ),
+    );
+  }
+
   setEvent = (event: IEvent) => {
     event.date = event.date.split("T")[0];
     this.events.set(event.id, event);

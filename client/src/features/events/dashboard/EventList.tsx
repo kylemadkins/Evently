@@ -1,5 +1,6 @@
+import { Fragment } from "react";
 import { observer } from "mobx-react-lite";
-import { Segment, Item } from "semantic-ui-react";
+import { Segment, Item, Header } from "semantic-ui-react";
 
 import { useStore } from "../../../app/stores";
 import EventListItem from "./EventListItem";
@@ -8,12 +9,21 @@ export default observer(function EventList() {
   const { eventStore } = useStore();
 
   return (
-    <Segment>
-      <Item.Group divided>
-        {eventStore.eventsByDate.map((event) => (
-          <EventListItem key={event.id} event={event} />
-        ))}
-      </Item.Group>
-    </Segment>
+    <>
+      {eventStore.groupedEvents.map(([group, events]) => (
+        <Fragment key={group}>
+          <Header sub color="teal">
+            {group}
+          </Header>
+          <Segment>
+            <Item.Group divided>
+              {events.map((event) => (
+                <EventListItem key={event.id} event={event} />
+              ))}
+            </Item.Group>
+          </Segment>
+        </Fragment>
+      ))}
+    </>
   );
 });
