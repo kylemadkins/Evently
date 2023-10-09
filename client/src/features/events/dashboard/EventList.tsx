@@ -15,13 +15,9 @@ export default observer(function EventList() {
           <Header sub color="teal">
             {group}
           </Header>
-          <Segment>
-            <Item.Group divided>
-              {events.map((event) => (
-                <EventListItem key={event.id} event={event} />
-              ))}
-            </Item.Group>
-          </Segment>
+          {events.map((event) => (
+            <EventListItem key={event.id} event={event} />
+          ))}
         </Fragment>
       ))}
     </>
