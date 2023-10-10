@@ -1,4 +1,5 @@
-﻿using Domain;
+﻿using Application.Core;
+using Domain;
 using FluentValidation;
 using MediatR;
 using Persistence;
@@ -7,7 +8,7 @@ namespace Application.Events
 {
     public class Create
     {
-        public class Command : IRequest
+        public class Command : IRequest<Result<Unit>>
         {
             public Event Event { get; set; } = null!;
         }
@@ -20,7 +21,7 @@ namespace Application.Events
             }
         }
 
-        public class Handler : IRequestHandler<Command>
+        public class Handler : IRequestHandler<Command, Result<Unit>>
         {
             private readonly DataContext _context;
 
@@ -29,14 +30,11 @@ namespace Application.Events
                 _context = context;
             }
 
-            public async Task Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Result<Unit>> Handle(Command request, CancellationToken cancellationToken)
             {
-                if (request.Event != null)
-                {
-                    _context.Events.Add(request.Event);
-                    await _context.SaveChangesAsync();
-                }
-                return;
+                _context.Events.Add(request.Event);
+                await _context.SaveChangesAsync();
+                return Result<Unit>.Success(Unit.Value);
             }
         }
     }

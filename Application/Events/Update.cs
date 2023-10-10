@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using Application.Core;
+using AutoMapper;
 using Domain;
 using FluentValidation;
 using MediatR;
@@ -8,7 +9,7 @@ namespace Application.Events
 {
     public class Update
     {
-        public class Command : IRequest
+        public class Command : IRequest<Result<Unit?>>
         {
             public Event Event { get; set; } = null!;
         }
@@ -21,7 +22,7 @@ namespace Application.Events
             }
         }
 
-        public class Handler : IRequestHandler<Command>
+        public class Handler : IRequestHandler<Command, Result<Unit?>>
         {
             private readonly DataContext _context;
             private readonly IMapper _mapper;
@@ -32,18 +33,13 @@ namespace Application.Events
                 _mapper = mapper;
             }
 
-            public async Task Handle(Command request, CancellationToken cancellationToken)
+            public async Task<Result<Unit?>> Handle(Command request, CancellationToken cancellationToken)
             {
-                if (request.Event != null)
-                {
-                    var evt = await _context.Events.FindAsync(request.Event.Id);
-                    if (evt != null)
-                    {
-                        _mapper.Map(request.Event, evt);
-                    }
-                    await _context.SaveChangesAsync();
-                }
-                return;
+                var evt = await _context.Events.FindAsync(request.Event.Id);
+                if (evt == null) return Result<Unit?>.Success(null);
+                _mapper.Map(request.Event, evt);
+                await _context.SaveChangesAsync();
+                return Result<Unit?>.Success(Unit.Value);
             }
         }
     }
