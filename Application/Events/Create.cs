@@ -1,4 +1,5 @@
 ﻿using Domain;
+using FluentValidation;
 using MediatR;
 using Persistence;
 
@@ -8,7 +9,15 @@ namespace Application.Events
     {
         public class Command : IRequest
         {
-            public Event? Event { get; set; }
+            public Event Event { get; set; } = null!;
+        }
+
+        public class CommandValidator : AbstractValidator<Command>
+        {
+            public CommandValidator()
+            {
+                RuleFor(x => x.Event).SetValidator(new EventValidator());
+            }
         }
 
         public class Handler : IRequestHandler<Command>
