@@ -19,7 +19,7 @@ namespace API.Controllers
                 if (result.Value == null) return NotFound();
                 return result.Value;
             }
-            return BadRequest();
+            return BadRequest(result.Error);
         }
     }
 }
