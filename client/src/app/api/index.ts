@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
 
 import { Event as IEvent } from "../types/Event";
 
@@ -8,14 +8,30 @@ const sleep = (delay: number) => {
   });
 };
 
-axios.interceptors.response.use(async (res) => {
-  try {
+axios.interceptors.response.use(
+  async (res) => {
     await sleep(500);
     return res;
-  } catch (err) {
-    return await Promise.reject(err);
-  }
-});
+  },
+  (err: AxiosError) => {
+    if (err.response) {
+      const { status, config, data } = err.response as AxiosResponse;
+      switch (status) {
+        case 404:
+          window.location.href = "/404";
+          break;
+        case 400:
+          if (config.method === "get" && data.errors.hasOwnProperty("id")) {
+            window.location.href = "/404";
+          }
+          break;
+        default:
+          break;
+      }
+    }
+    return Promise.reject(err);
+  },
+);
 
 axios.defaults.baseURL = "http://localhost:5000/api";
 
